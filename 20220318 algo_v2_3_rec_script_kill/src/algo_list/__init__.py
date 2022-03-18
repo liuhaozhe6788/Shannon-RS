@@ -1,0 +1,7 @@
+# encoding:utf-8
+"""
+    该package用于对所有用户或者单个用户运行选中的算法
+"""
+from .run import run_all
+from .generalized_cf import run_generalized_cf
+from .item_cf import get_top_n, run_item_cf
