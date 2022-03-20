@@ -99,9 +99,6 @@ class UI(QWidget):
         self.add_image_to_like(
             "https://pictrue01-1304083978.cos.ap-guangzhou.myqcloud.com/6C05234C6E061CF26411CE949B185139",
             "动态2")
-        self.add_vid_to_like(
-            ""
-        )
 
     def add_image_to_like(self, url_image, label):
         fixed_height = 400

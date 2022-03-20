@@ -1,7 +1,7 @@
+# encoding:utf-8
 import sys
 import os
 import urllib.request
-import ffmpeg
 from PyQt5.QtWidgets import *
 from PyQt5.QtMultimedia import *
 from PyQt5.QtMultimediaWidgets import *
@@ -26,13 +26,9 @@ class UI(QWidget):
         # 创建videoWidget对象
         self.videoWidget = QVideoWidget()
 
-        # 创建打开文件按钮
-        self.openBtn = QPushButton("Open Files")
-        self.openBtn.clicked.connect(self.open_file)
-
         # 创建播放按钮
         self.playBtn = QPushButton("")
-        self.playBtn.setEnabled(False)
+        self.playBtn.setEnabled(True)
         self.playBtn.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.playBtn.clicked.connect(self.play_video)
 
@@ -49,7 +45,6 @@ class UI(QWidget):
         self.hboxLayout = QHBoxLayout()
         self.hboxLayout.setContentsMargins(0, 0, 0, 0)
 
-        self.hboxLayout.addWidget(self.openBtn)
         self.hboxLayout.addWidget(self.playBtn)
         self.hboxLayout.addWidget(self.slider)
 
@@ -65,19 +60,24 @@ class UI(QWidget):
         self.mediaPlayer.positionChanged.connect(self.position_changed)
         self.mediaPlayer.durationChanged.connect(self.duration_changed)
 
-    def open_file(self):
+        self.file_path = "/home/liuhaozhe/PycharmProjects/20220318 algo_v2_3_rec_script_kill/src/qt_visual/buffer.mp4"
         url = "https://trends-video-1304083978.file.myqcloud.com/48633_1631758537931.mp4"
-        urllib.request.urlretrieve(url, "buffer.mp4")
-        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile("/home/liuhaozhe/Videos/At my husband's funeral.mkv")))
+        urllib.request.urlretrieve(url, self.file_path)
+
+        if self.mediaPlayer.state() == QMediaPlayer.StoppedState:
+            self.playBtn.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+
+    def open_file(self):
+        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.file_path)))
         self.playBtn.setEnabled(True)
-        self.mediaPlayer.play()
-        self.playBtn.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
 
     def play_video(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer.pause()
             self.playBtn.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         else:
+            if self.mediaPlayer.state() == QMediaPlayer.StoppedState:
+                self.open_file()
             self.mediaPlayer.play()
             self.playBtn.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
 
@@ -90,9 +90,6 @@ class UI(QWidget):
     def set_position(self, pos):
         self.mediaPlayer.setPosition(pos)
 
-    def handle_errors(self):
-        self.playBtn.setEnabled(False)
-        self.label.setText("Error: " + self.mediaPlayer.errorString())
 
 
 app = QApplication(sys.argv)

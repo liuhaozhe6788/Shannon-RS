@@ -23,7 +23,7 @@
      <x>11</x>
      <y>11</y>
      <width>216</width>
-     <height>28</height>
+     <height>39</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -44,7 +44,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../../img/yes.png</normaloff>../../img/yes.png</iconset>
+        <normaloff>../../img/yes.jpeg</normaloff>../../img/yes.jpeg</iconset>
       </property>
       <property name="iconSize">
        <size>
