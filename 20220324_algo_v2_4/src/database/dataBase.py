@@ -3,6 +3,8 @@ import pandas as pd
 import copy
 import re
 from icecream import ic
+import sys
+sys.dont_write_bytecode = True
 
 from database import check  # 用于单一模块运行
 from database.preprocessing import to_records

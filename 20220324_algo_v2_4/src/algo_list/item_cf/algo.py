@@ -6,6 +6,8 @@ import pandas as pd
 import feather
 from sklearn.metrics.pairwise import pairwise_distances
 from icecream import ic
+import sys
+sys.dont_write_bytecode = True
 
 import configs
 import utils
@@ -103,7 +105,10 @@ def run_item_cf(user_id, data_base_, train_data=None, test_flag=False):
     :return:
     """
     top_n_df = feather.read_dataframe(os.path.join(configs.rec_result_folder_path, "item_cf_top_n_recommendation_map.feather"))
-    top_n_items = list(list(top_n_df[top_n_df["user"] == str(user_id)]["top_n"])[0])
+    if top_n:=list(top_n_df[top_n_df["user"] == str(user_id)]["top_n"]):
+        top_n_items = list(top_n[0])
+    else:
+        top_n_items = []
     # print(top_n_items)
     n_items = 50
     n_top_n = len(top_n_items)

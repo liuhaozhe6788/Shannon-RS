@@ -4,6 +4,8 @@ import numpy as np
 from sklearn.neighbors import NearestNeighbors
 from sklearn import preprocessing
 from icecream import ic
+import sys
+sys.dont_write_bytecode = True
 
 
 from database import DataBase

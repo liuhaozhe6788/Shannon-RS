@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 from pyplotz.pyplotz import PyplotZ
+import sys
+sys.dont_write_bytecode = True
 
 import configs
 

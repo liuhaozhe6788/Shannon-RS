@@ -1,6 +1,9 @@
 # encoding:utf-8
 import os
 import pandas as pd
+import sys
+sys.dont_write_bytecode = True
+
 
 import configs
 import database

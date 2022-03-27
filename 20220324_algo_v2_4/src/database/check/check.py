@@ -1,7 +1,8 @@
 import os
 import pandas as pd
 from icecream import ic
-
+import sys
+sys.dont_write_bytecode = True
 
 behavior_file_path = os.path.realpath(os.path.join(__file__, "../behavior.xlsx"))
 

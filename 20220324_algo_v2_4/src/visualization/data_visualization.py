@@ -6,6 +6,8 @@ import requests
 import io
 import shutil
 from icecream import ic
+import sys
+sys.dont_write_bytecode = True
 
 import configs
 import random

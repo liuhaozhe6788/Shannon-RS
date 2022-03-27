@@ -7,6 +7,8 @@ import PIL
 import requests
 import io
 from icecream import ic
+import sys
+sys.dont_write_bytecode = True
 
 import configs
 from algo_list import run_all_users

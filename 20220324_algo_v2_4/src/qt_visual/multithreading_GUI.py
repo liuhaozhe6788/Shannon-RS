@@ -1,5 +1,6 @@
 # encoding: utf-8
 import sys
+sys.dont_write_bytecode = True
 import os
 import logging
 from PyQt5.QtWidgets import *
@@ -12,11 +13,16 @@ import video_widget
 import configs
 import database
 import utils
-from algo_list import run_all_algos
+from algo_list import run_generalized_cf, run_item_cf, get_top_n
 
 logging.basicConfig(format="%(message)s", level=logging.INFO)
 
 N = 0
+
+
+class WorkerSignals(QObject):
+    finish = pyqtSignal(bytes)
+    finish_all = pyqtSignal(bool)
 
 
 class Runnable(QRunnable):
@@ -24,26 +30,20 @@ class Runnable(QRunnable):
         self.widget = scroll_widget
         self.n = n
         self.n_threads = n_threads
+        self.signals = WorkerSignals()
         super().__init__()
 
+    # GUI界面的更新不能运行在子线程中
     def run(self):
         global N
-        if self.widget.content_type == "img":
-            self.widget.add_img()
-            N = N + 1
-            logging.info(f"Thread {self.n} is finished, {N} threads are finished")
-
-        elif self.widget.content_type == "vid":
-            self.widget.add_vid()
-            N = N + 1
-            logging.info(f"Thread {self.n} is finished, {N} threads are finished")
-
-        else:
-            return
+        frame_data = self.widget.add_img()
+        N = N + 1
+        logging.info(f"thread No.{self.n} is finished, {N} threads are finished")
+        self.signals.finish.emit(frame_data)  # 图片下载完后，发出信号给GUI，用于界面的更新，显示图片
 
         if N == self.n_threads:
             logging.info(f"all {N} contents downloaded")
-            N == 0
+            self.signals.finish_all.emit(True)
 
 
 class UI(QWidget):
@@ -54,10 +54,10 @@ class UI(QWidget):
         utils.create_folder_paths()
 
         self.db = db
-        self.rec_res = run_all_algos(self.db)
+        get_top_n(self.db)
 
         self.setFixedWidth(1850)
-        self.setFixedHeight(1150)
+        self.setFixedHeight(1000)
 
         # 增加用户ID输入框
         self.yes_btn = QPushButton()
@@ -90,16 +90,17 @@ class UI(QWidget):
         self.scrollAlgo_2Layout = QHBoxLayout()
 
         self.uid_result = QLabel("用户ID: ")
-        self.uid_result.setFont(QFont("Sanserif", 20))
+        self.uid_result.setFont(QFont("Sanserif", 15))
         self.uid_result.setFixedHeight(30)
         self.like_prompt = QLabel("由于您已点赞了如下动态: ")
-        self.like_prompt.setFont(QFont("Sanserif", 20))
+        self.like_prompt.setFont(QFont("Sanserif", 15))
         self.like_prompt.setFixedHeight(30)
         self.generalized_cf_prompt = QLabel("广义协同过滤给您推荐如下动态: ")
-        self.generalized_cf_prompt.setFont(QFont("Sanserif", 20))
+        self.generalized_cf_prompt.setFont(QFont("Sanserif", 15))
         self.generalized_cf_prompt.setFixedHeight(30)
         self.item_cf_prompt = QLabel("基于物品的协同过滤给您推荐如下动态: ")
-        self.item_cf_prompt.setFont(QFont("Sanserif", 20))
+        self.item_cf_prompt.setFont(QFont("Sanserif", 15))
+        self.generalized_cf_prompt.setFixedHeight(30)
 
         scrollArea_height = 400
 
@@ -129,7 +130,7 @@ class UI(QWidget):
         self.scrollWindowWidget.setLayout(self.scrollWindowLayout)
         # self.scrollWindow.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.scrollWindow.setWidgetResizable(True)
-        self.scrollWindow.setFixedHeight(1050)
+        # self.scrollWindow.setFixedHeight(1050)
         self.scrollWindow.setWidget(self.scrollWindowWidget)
 
         self.inputWidget.setLayout(self.inputLayout)
@@ -148,14 +149,17 @@ class UI(QWidget):
 
     def yes_btn_signal(self):
         print("yes button clicked")
+        self.yes_btn.setEnabled(False)
+        global N
+        N = 0
         uid = self.line_edit.text()
         self.uid_result.setText(f"用户ID: {uid}")
         self.delete_all_res()
         self.scrollWidgets = []
         like_items = self.db.get_objs(['user', uid, 'like', 'item'], key="动态")
         like_items.reverse()
-        n_items_max = 30
-        like_items = like_items[: min(n_items_max, len(like_items))]
+        # n_items_max = 30
+        # like_items = like_items[: min(n_items_max, len(like_items))]
 
         for like_item in like_items:
             like_item_club = ",".join((list(filter(lambda x: ":".join(x.split(":")[-2:]), self.db.get_objs(['item', like_item, 'have', 'club'], key="动态")))))
@@ -173,14 +177,12 @@ class UI(QWidget):
                     like_item_url,
                     like_item.split(":")[-1],
                     ":".join(like_item_club.split(":")[-2:]),
-                    self.scrollLikeLayout,
-                    like_item.split(":")[-1]
+                    self.scrollLikeLayout
                 )
-        algo_1_res, algo_2_res = self.rec_res
-
-        algo_1_items = list(algo_1_res.loc[algo_1_res["user"] == uid, "recommendation"])[0]
-        n_items_max = 20
-        algo_1_items = algo_1_items[: min(n_items_max, len(algo_1_items))]
+        algo_1_items = run_generalized_cf(uid, self.db)
+        # algo_1_items = list(algo_1_res.loc[algo_1_res["user"] == uid, "recommendation"])[0]
+        # n_items_max = 20
+        # algo_1_items = algo_1_items[: min(n_items_max, len(algo_1_items))]
 
         for algo_1_item in algo_1_items:
             algo_1_item_club = ",".join((list(filter(lambda x: ":".join(x.split(":")[-2:]), self.db.get_objs(['item', algo_1_item, 'have', 'club'], key="动态")))))
@@ -198,13 +200,13 @@ class UI(QWidget):
                     algo_1_item_url,
                     algo_1_item.split(":")[-1],
                     ":".join(algo_1_item_club.split(":")[-2:]),
-                    self.scrollAlgo_1Layout,
-                    algo_1_item.split(":")[-1]
+                    self.scrollAlgo_1Layout
                 )
 
-        algo_2_items = list(algo_2_res.loc[algo_2_res["user"] == uid, "recommendation"])[0]
-        n_items_max = 20
-        algo_2_items = algo_2_items[: min(n_items_max, len(algo_2_items))]
+
+        algo_2_items = run_item_cf(uid, self.db)
+        # n_items_max = 20
+        # algo_2_items = algo_2_items[: min(n_items_max, len(algo_2_items))]
 
         for algo_2_item in algo_2_items:
             algo_2_item_club = ",".join((list(filter(lambda x: ":".join(x.split(":")[-2:]), self.db.get_objs(['item', algo_2_item, 'have', 'club'], key="动态")))))
@@ -222,30 +224,37 @@ class UI(QWidget):
                     algo_2_item_url,
                     algo_2_item.split(":")[-1],
                     ":".join(algo_2_item_club.split(":")[-2:]),
-                    self.scrollAlgo_2Layout,
-                    algo_2_item.split(":")[-1]
+                    self.scrollAlgo_2Layout
                 )
 
-        # for i in range(3):
+        # # 用于调试
+        # for i in range(300):
         #     self.add_widgets(
         #         "vid",
         #         "https://trends-video-1304083978.file.myqcloud.com/48622_1630374360300.mp4",
         #         "动态2",
         #         "追星",
         #         self.scrollLikeLayout,
-        #         "动态2"
         #     )
+        #     self.add_widgets(
+        #         "img",
+        #         "https://pictrue01-1304083978.file.myqcloud.com/48660_16282286980466098_828.000000*992.000000.png",
+        #         "动态2",
+        #         "追星",
+        #         self.scrollLikeLayout,
+        #     )
+
 
         self.add_contents()
 
-    def add_widgets(self, content_type_, url_, itemid_, club_, scroll_layout_, buffer_name_=None):
+    def add_widgets(self, content_type_, url_, itemid_, club_, scroll_layout_):
         if content_type_ == "img":
             img_widget = image_widget.ImageWidget(url_, itemid_, club_)
             scroll_layout_.addWidget(img_widget)
             self.scrollWidgets.append(img_widget)
 
         elif content_type_ == "vid":
-            vid_widget = video_widget.VideoWidget(url_, itemid_, club_, buffer_name_)
+            vid_widget = video_widget.VideoWidget(url_, itemid_, club_)
             scroll_layout_.addWidget(vid_widget)
             self.scrollWidgets.append(vid_widget)
         else:
@@ -256,6 +265,8 @@ class UI(QWidget):
         logging.info(f"Running {len(self.scrollWidgets)} Threads")
         for i in range(len(self.scrollWidgets)):
             runnable = Runnable(self.scrollWidgets[i], i, len(self.scrollWidgets))
+            runnable.signals.finish.connect(self.scrollWidgets[i].updateUI)
+            runnable.signals.finish_all.connect(lambda x: self.yes_btn.setEnabled(x))
             pool.start(runnable)
 
     def delete_all_res(self):
