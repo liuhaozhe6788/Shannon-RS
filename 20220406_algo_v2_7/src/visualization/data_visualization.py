@@ -59,6 +59,7 @@ def cleaned_data_vis(cleaned_data_file):
     ic(dynamics_item_df_.columns, user_like_df.columns)
     liked_script_kill_item_df = pd.merge(dynamics_item_df_[["object_id", "item_desc"]], user_like_df, on="object_id")
     liked_script_kill_item_df = liked_script_kill_item_df[liked_script_kill_item_df["item_desc"].str.startswith("剧本杀")]
+    liked_script_kill_item_df = liked_script_kill_item_df.drop_duplicates(subset=["object_id"])
     liked_script_kill_items = liked_script_kill_item_df["object_id"].unique()
     ic(len(liked_script_kill_items))
 
@@ -73,11 +74,11 @@ def cleaned_data_vis(cleaned_data_file):
 
     # 动态中所有剧本杀club二级标签的数量分布，countplot
     script_kill_item_df_ = script_kill_item_df.copy()
-    club_one_desc = script_kill_item_df_.apply(lambda x: x["item_desc"].split(":")[1], axis=1)
-    club_one_desc = club_one_desc.to_frame().rename(columns={0: "desc"})
+    club_two_desc = script_kill_item_df_.apply(lambda x: x["item_desc"].split(":")[1], axis=1)
+    club_two_desc = club_two_desc.to_frame().rename(columns={0: "desc"})
     # ic(club_one_desc)
     plotgenerator.count_plot(x="desc",
-                             data=club_one_desc,
+                             data=club_two_desc,
                              figwidth=60,
                              figheight=16,
                              new_xlabel="剧本杀CLUB二级标签",
@@ -89,11 +90,11 @@ def cleaned_data_vis(cleaned_data_file):
 
     # 用户点赞动态中所有剧本杀club二级标签的数量分布，countplot
     liked_script_kill_item_df_ = liked_script_kill_item_df.copy()
-    club_one_desc = liked_script_kill_item_df_.apply(lambda x: x["item_desc"].split(":")[1], axis=1)
-    club_one_desc = club_one_desc.to_frame().rename(columns={0: "desc"})
+    club_two_desc = liked_script_kill_item_df_.apply(lambda x: x["item_desc"].split(":")[1], axis=1)
+    club_two_desc = club_two_desc.to_frame().rename(columns={0: "desc"})
     # ic(club_one_desc)
     plotgenerator.count_plot(x="desc",
-                             data=club_one_desc,
+                             data=club_two_desc,
                              figwidth=60,
                              figheight=16,
                              new_xlabel="剧本杀CLUB二级标签",
