@@ -10,6 +10,7 @@ from PyQt5 import uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import cv2
+import time
 
 import configs
 
@@ -35,16 +36,16 @@ class VideoWidget(QWidget):
         self.layout.addWidget(self.clubLabel)
 
     def add_img(self):
-        ret = 0
+        # time.sleep(1)
         frame = None
-        while not ret:
+        while frame is None:
             cap = cv2.VideoCapture(self.url)
 
             fps = cap.get(cv2.CAP_PROP_FPS)
             cap.set(cv2.CAP_PROP_POS_MSEC, fps / 20)
 
             ret, frame = cap.read()
-        frame_data = cv2.imencode('.jpg', frame)[1].tostring()
+        frame_data = cv2.imencode('.png', frame)[1].tostring()
         return frame_data
 
     def updateUI(self, frame_data):
