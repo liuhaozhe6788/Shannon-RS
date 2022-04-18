@@ -1,8 +1,10 @@
 # encoding:utf-8
 import os
 import pandas as pd
+import numpy as np
 import sys
 sys.dont_write_bytecode = True
+from icecream import ic
 
 import configs
 import database
@@ -17,4 +19,9 @@ if __name__ == "__main__":
     mydb = database.DataBase(os.path.join(configs.data_folder_path, "data_20220222.xlsx"))
 
     algos = AlgosOperator(mydb)
-    algos.calc_and_store_metrics(50)
+    iteration = 20
+    arr = np.zeros(iteration, dtype=float)
+    # algos.store_metrics(50)
+    for i in range(iteration):
+        arr[i] = algos.calc_traib_test_ratio()
+    ic(np.average(arr))

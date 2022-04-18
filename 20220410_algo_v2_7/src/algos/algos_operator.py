@@ -94,6 +94,14 @@ class AlgosOperator(object):
 
             yield [usr, train_like_items, test_like_items]
 
+    def calc_traib_test_ratio(self):
+        train_size = 0
+        test_size = 0
+        for usr, train_like_items, test_like_items in self.train_test_split(0.5):
+            train_size += len(train_like_items)
+            test_size += len(test_like_items)
+        return train_size/test_size
+
     # 使用训练集的数据训练模型，得到推荐结果
     def get_recommendation(self, algo_name, item_category="动态"):
         if item_category == "动态":
@@ -161,7 +169,7 @@ class AlgosOperator(object):
         f_score_ = 2 * accuracy_ * hit_ratio_ / (accuracy_ + hit_ratio_)
         return [accuracy_, hit_ratio_, f_score_]
 
-    def calc_and_store_metrics(self, num_iter):
+    def store_metrics(self, num_iter):
         generalized_cf_metrics_data = [[], [], []]
         item_cf_metrics_data = [[], [], []]
         user_cf_metrics_data = [[], [], []]
@@ -217,4 +225,5 @@ if __name__ == "__main__":
     db = DataBase(os.path.join(configs.data_folder_path, "data_20220222.xlsx"))
     algos = AlgosOperator(db)
     # algos_list.run_all_algos()
-    algos.calc_and_store_metrics(2)
+    # algos.store_metrics(2)
+
