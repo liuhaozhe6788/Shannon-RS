@@ -134,7 +134,9 @@ class AlgosOperator(object):
                     recommend_data.append([usr, recommend_item])
 
         elif algo_name == "item_cf":
-            item_cf_ = ItemCF(self.database, "item_cf_top_n_recommendation_map.feather", train_data=train_data, test_flag=True)
+            params = np.load(os.path.join(configs.perf_result_folder_path, "item_cf_params.npy"))
+            item_cf_ = ItemCF(self.database, "item_cf_top_n_recommendation_map.feather", sim_thres=params[0],
+                              pred_thres=params[1], train_data=train_data, test_flag=True)
             item_cf_.get_top_n()
 
             for usr in self.database.like_users:
@@ -143,7 +145,9 @@ class AlgosOperator(object):
                     recommend_data.append([usr, recommend_item])
 
         elif algo_name == "user_cf":
-            user_cf_ = UserCF(self.database, "user_cf_top_n_recommendation_map.feather", train_data=train_data, test_flag=True)
+            params = np.load(os.path.join(configs.perf_result_folder_path, "user_cf_params.npy"))
+            user_cf_ = UserCF(self.database, "user_cf_top_n_recommendation_map.feather", sim_thres=params[0],
+                              pred_thres=params[1], train_data=train_data, test_flag=True)
             user_cf_.get_top_n()
 
             for usr in self.database.like_users:

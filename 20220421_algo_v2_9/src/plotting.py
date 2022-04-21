@@ -112,14 +112,14 @@ class PlotGenerator:
             plt.savefig(new_fig_name, dpi=100)
 
     def line_plot(self, figwidth, figheight, x, y, data, new_legend_labels, new_xlabel,
-                  new_ylabel, new_title, legend_fontsize, xtick_fontsize, ytick_fontsize, xlabel_fontsize,
+                  new_ylabel, new_title, legend_fontsize, xtick_fontsize, ytick_fontsize, ylim_low, ylim_high, xlabel_fontsize,
                   ylabel_fontsize, title_fontsize, xtick_rot=0, hue=None, new_fig_name=None, savefig=False, show_point_value=False):
         pltz = PyplotZ()
         pltz.enable_chinese()
         plt.figure(figsize=(figwidth, figheight))
         sns.set_style(self._style)
-        plt.ylim(0.025, 0.03)
-        ax = sns.lineplot(x=x, y=y, hue=hue, data=data, linewidth=6, palette=self._palette)
+        plt.ylim(ylim_low, ylim_high)
+        ax = sns.lineplot(x=x, y=y, hue=hue, data=data, marker="o", markersize=12, linewidth=6, palette=self._palette)
         if show_point_value:
             self.show_values(ax)
         pltz.legend(labels=new_legend_labels)

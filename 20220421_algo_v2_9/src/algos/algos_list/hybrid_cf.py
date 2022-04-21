@@ -26,7 +26,8 @@ class HybridCF():
         self.train_data = train_data
         self.test_flag = test_flag
         self.filter_flag = filter_flag
-        self.user_cf = UserCF(database, buffer_name, train_data, test_flag, filter_flag)
+        self.user_cf_params = np.load(os.path.join(configs.perf_result_folder_path, "user_cf_params.npy"))
+        self.user_cf = UserCF(database, buffer_name, self.user_cf_params[0], self.user_cf_params[1], train_data, test_flag, filter_flag)
         self.generalized_cf = GeneralizedCF(self.database, self.train_data, self.test_flag, self.filter_flag)
         self.basic = Basic(database)
 

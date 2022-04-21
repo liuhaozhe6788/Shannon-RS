@@ -18,7 +18,7 @@ np.set_printoptions(threshold=np.inf)
 
 class UserCF(ItemCF):
 
-    def __init__(self, database, buffer_name, sim_thres=0, pred_thres=1,train_data=None, test_flag=False, filter_flag=True):
+    def __init__(self, database, buffer_name, sim_thres=0, pred_thres=1, train_data=None, test_flag=False, filter_flag=True):
 
         super().__init__(database, buffer_name, sim_thres, pred_thres, train_data, test_flag, filter_flag)
 
