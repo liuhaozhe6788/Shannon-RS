@@ -81,3 +81,7 @@ def userCF_tuning_vis():
 if __name__ == "__main__":
     itemCF_tuning_vis()
     userCF_tuning_vis()
+    user_cf_params = np.load(os.path.join(configs.perf_result_folder_path, "user_cf_params.npy"))
+    item_cf_params = np.load(os.path.join(configs.perf_result_folder_path, "item_cf_params.npy"))
+    ic(user_cf_params)
+    ic(item_cf_params)

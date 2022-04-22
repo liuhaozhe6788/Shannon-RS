@@ -17,13 +17,14 @@ sys.dont_write_bytecode = True
 
 class GeneralizedCF(object):
 
-    def __init__(self, database, train_data=None, test_flag=False, filter_flag=True):
+    def __init__(self, database, n_like_recent=100, train_data=None, test_flag=False, filter_flag=True):
         self.usr = None
         self.database = database
         self.train_data = train_data
         self.test_flag = test_flag
         self.filter_flag = filter_flag
         self.basic = Basic(self.database)
+        self.n_like_recent = n_like_recent
 
     def choose_contents(self, set_attr: str, behavior: str, obj_attr: str, contents_from: set) -> set:
         """
@@ -170,7 +171,7 @@ class GeneralizedCF(object):
         else:
             user_like = self.database.get_objs(['user', self.usr, 'like', 'item'], key="动态")
         n_user_like = len(user_like)
-        n_recently_like = 100
+        n_recently_like = self.n_like_recent
         threshold = 100
         n_recently_like = min(n_recently_like, n_user_like)
         # clubs_list = list(dict.fromkeys(list(map(lambda x: x.split(":")[-2], list(filter(lambda s: s.startswith("动态"), data_base_.clubs))))))
@@ -233,5 +234,5 @@ class GeneralizedCF(object):
 if __name__ == "__main__":
     utils.create_folder_paths()
     db = DataBase(os.path.join(configs.data_folder_path, "data_20220222.xlsx"))
-    generalized_cf = GeneralizedCF("50121", db)
-    generalized_cf.run()
+    generalized_cf = GeneralizedCF(db)
+    generalized_cf.run("49060")

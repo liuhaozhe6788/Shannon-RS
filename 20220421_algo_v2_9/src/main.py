@@ -22,8 +22,9 @@ if __name__ == "__main__":
     algos = AlgosOperator(mydb)
     # params, itemCF_fscores = algos.itemCF_tuning(np.arange(0.5, 0.8, 0.03), np.arange(0, 0.2, 0.04))
     # params, userCF_fscores = algos.userCF_tuning(np.arange(0.2, 0.4, 0.02), np.arange(0.12, 0.24, 0.02))
+    param, generalizedCF_fscores = algos.generalizedCF_tuning(np.arange(0, 440))
 
-    # visualization.itemCF_tuning_vis()
+    visualization.itemCF_tuning_vis()
     # visualization.userCF_tuning_vis()
 
     # iteration = 20
@@ -32,4 +33,4 @@ if __name__ == "__main__":
     #     arr[i] = algos.calc_train_test_ratio()
     # print(np.average(arr))
 
-    algos.store_metrics_of_all_algos(2)
+    # algos.store_metrics_of_all_algos(2)

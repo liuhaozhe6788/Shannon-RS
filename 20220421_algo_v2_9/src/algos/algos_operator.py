@@ -179,6 +179,64 @@ class AlgosOperator(object):
         f_score_ = 2 * accuracy_ * hit_ratio_ / (accuracy_ + hit_ratio_)
         return [accuracy_, hit_ratio_, f_score_]
 
+    # 调整GeneralizedCF模型的参数
+    def generalizedCF_tuning(self, n_like_recent_range):
+        train_parts = [[], []]
+        test_parts = [[], []]
+        f_scores = []
+
+        for usr, like_items_p1, like_items_p2 in self.two_fold_partition():
+            train_parts[0].append((usr, like_items_p1))
+            test_like_items = copy.deepcopy(like_items_p2)
+            if self.filter_flag:
+                test_like_items = self.basic.filter_club(like_items_p2, "剧本杀")
+            for test_like_item in test_like_items:
+                test_parts[0].append([usr, test_like_item])
+
+            train_parts[1].append((usr, like_items_p2))
+            test_like_items = copy.deepcopy(like_items_p1)
+            if self.filter_flag:
+                test_like_items = self.basic.filter_club(like_items_p1, "剧本杀")
+            for test_like_item in test_like_items:
+                test_parts[1].append([usr, test_like_item])
+
+        for i in range(len(train_parts)):
+            train_parts[i] = dict(train_parts[i])
+
+        for j in range(len(n_like_recent_range)):
+            f_score_parts = []
+            for k in range(len(train_parts)):
+                recommend_data = []
+
+                generalized_cf = GeneralizedCF(self.database, n_like_recent=n_like_recent_range[j],
+                                               train_data=train_parts[k], test_flag=True)
+
+                for usr in self.database.like_users:
+                    gama = generalized_cf.run(usr)
+                    for recommend_item in gama:
+                        recommend_data.append([usr, recommend_item])
+
+                test_df = pd.DataFrame(data=test_parts[k])
+                test_df = test_df.rename(columns={0: "user", 1: "item"})
+                recommend_df = pd.DataFrame(data=recommend_data)
+                recommend_df = recommend_df.rename(columns={0: "user", 1: "item"})
+                tp_df = pd.merge(test_df, recommend_df, on=["user", "item"])
+
+                accuracy = len(tp_df) / len(recommend_df)
+                hit_ratio = len(tp_df) / len(test_df)
+
+                f_score = 2 * accuracy * hit_ratio / (accuracy + hit_ratio)
+                f_score_parts.append(f_score)
+            f_scores.append(sum(f_score_parts)/len(f_score_parts))
+        f_scores = np.array(f_scores)
+
+        result = np.where(f_scores == np.amax(f_scores))
+        param_index = result[0][0]
+        param = [n_like_recent_range[param_index]]
+        np.save(os.path.join(configs.perf_result_folder_path, "generalized_cf_tuning.npy"), f_scores)
+        np.save(os.path.join(configs.perf_result_folder_path, "generalized_cf_params.npy"), np.asarray(param))
+        return param, f_scores
+
     # 调整userCF模型的参数
     def userCF_tuning(self, sim_thres_range, pred_thres_range):
         train_parts = [[], []]
