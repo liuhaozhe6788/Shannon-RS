@@ -7,7 +7,6 @@ import sys
 # from PyQt5.QtWidgets import QApplication
 
 sys.dont_write_bytecode = True
-from icecream import ic
 
 import configs
 import database
@@ -21,7 +20,7 @@ if __name__ == "__main__":
     utils.create_folder_paths()
 
     # 清洗后的数据可视化
-    # visualization.cleaned_data_vis("data_20220222.xlsx")
+    visualization.cleaned_data_vis("data_20220222.xlsx")
 
     mydb = database.DataBase(os.path.join(configs.data_folder_path, "data_20220222.xlsx"))
     algos = AlgosOperator(mydb)
@@ -30,9 +29,9 @@ if __name__ == "__main__":
     # param, hybridCF_fscores = algos.hybridCF_tuning(np.arange(0.4, 0.6, 0.02))
 
     # 调参结果可视化
-    # visualization.itemCF_tuning_vis(np.arange(0.5, 0.8, 0.03), np.arange(0, 0.2, 0.04))
-    # visualization.userCF_tuning_vis(np.arange(20, 50, 3), np.arange(0.1, 0.14, 0.01))
-    # visualization.hybridCF_tuning_vis(np.arange(0.4, 0.6, 0.02))
+    visualization.itemCF_tuning_vis(np.arange(0.5, 0.8, 0.03), np.arange(0, 0.2, 0.04))
+    visualization.userCF_tuning_vis(np.arange(20, 50, 3), np.arange(0.1, 0.14, 0.01))
+    visualization.hybridCF_tuning_vis(np.arange(0.4, 0.6, 0.02))
 
     # iteration = 20
     # arr = np.zeros(iteration, dtype=float)
@@ -69,15 +68,15 @@ if __name__ == "__main__":
     # print(hybrid_cf.run("49070"))
 
     # 推荐结果可视化
-    # algo_names = ["generalized_cf", "item_cf", "user_cf", "hybrid_cf"]
-    # legend_names = ["Hybrid Generalized CF", "Item-based CF", "User-based CF", "Naive Hybrid CF"]
-    # gama_dfs = []
-    # for i in range(len(algo_names)):
-    #     gama_df = algos.run_all_users(algo_names[i])
-    #     visualization.club_dist_vis(algo_names[i], legend_names[i], gama_df, mydb)
-    #     gama_dfs.append(gama_df)
-    # gama_results = dict(zip(algo_names, gama_dfs))
-    # visualization.hit_vis(algo_names, legend_names, gama_results, mydb)
+    algo_names = ["generalized_cf", "item_cf", "user_cf", "hybrid_cf"]
+    legend_names = ["Hybrid Generalized CF", "Item-based CF", "User-based CF", "Naive Hybrid CF"]
+    gama_dfs = []
+    for i in range(len(algo_names)):
+        gama_df = algos.run_all_users(algo_names[i])
+        visualization.club_dist_vis(algo_names[i], legend_names[i], gama_df, mydb)
+        gama_dfs.append(gama_df)
+    gama_results = dict(zip(algo_names, gama_dfs))
+    visualization.hit_vis(algo_names, legend_names, gama_results, mydb)
 
     # 显示GUI
     # app = QApplication(sys.argv)

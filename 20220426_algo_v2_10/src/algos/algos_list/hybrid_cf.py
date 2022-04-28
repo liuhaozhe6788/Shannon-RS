@@ -21,7 +21,7 @@ class HybridCF():
 
     def __init__(self, database, item_cf_buffer_name, user_cf_buffer_name, p=0.6, train_data=None, test_flag=False, filter_flag=True):
         self.database = database
-        self.p = p
+        self.p = p  # 混合比例参数user_cf的结果/item_cf的结果
         self.item_cf_buffer_name = item_cf_buffer_name
         self.user_cf_buffer_name = user_cf_buffer_name
         self.train_data = train_data
@@ -38,11 +38,6 @@ class HybridCF():
         self.item_cf.get_top_n()
 
     def run(self, usr):
-        """
-        对user_id用户进行物品推荐，该过程读取.feather文档，找到用户对应的前N名物品随后增加最受欢迎的物品
-        :param usr:
-        :return:
-        """
         max_length_of_rec = 50
         user_cf_items = self.user_cf.run(usr)
         num_user_cf_items = len(user_cf_items)

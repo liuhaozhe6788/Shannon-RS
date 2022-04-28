@@ -7,10 +7,10 @@ import numpy as np
 import pandas as pd
 from icecream import ic
 import sys
-sys.dont_write_bytecode = True
 
 import configs
 from database import check
+sys.dont_write_bytecode = True
 
 
 def clean_data(raw_file):

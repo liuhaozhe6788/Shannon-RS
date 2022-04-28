@@ -5,11 +5,11 @@ import os
 import sys
 import random
 import copy
+import itertools
 from icecream import ic
 
 import utils
 import configs
-from database import DataBase
 from .algos_list import GeneralizedCF, ItemCF, UserCF, HybridCF, Basic
 sys.dont_write_bytecode = True
 
@@ -18,7 +18,7 @@ random.seed(0)
 
 class AlgosOperator(object):
     """
-        运行所有推荐算法和计算推荐算法的性能指标
+        运行所有推荐算法、计算推荐算法的性能指标和调整算法模型的参数
     """
 
     def __init__(self, database, filter_flag=True):
@@ -112,6 +112,7 @@ class AlgosOperator(object):
 
             yield [usr, like_items[: int(like_indices/2)], like_items[int(like_indices/2):]]
 
+    # 计算训练集与验证集的比例
     def calc_train_test_ratio(self):
         train_size = 0
         test_size = 0
@@ -181,7 +182,7 @@ class AlgosOperator(object):
         recommend_df = recommend_df.rename(columns={0: "user", 1: "item"})
         return test_df, recommend_df
 
-    # 使用测试集的数据进行推荐精度、命中率/召回率和F-score的计算
+    # 使用验证集的数据进行推荐精度、命中率/召回率和F-score的计算
     def calc_metrics(self, algo_name):
         test_df, recommend_df = self.get_recommendation(algo_name)
         tp_df = pd.merge(test_df, recommend_df, on=["user", "item"])
@@ -189,6 +190,12 @@ class AlgosOperator(object):
         hit_ratio_ = len(tp_df) / len(test_df)
         f_score_ = 2 * accuracy_ * hit_ratio_ / (accuracy_ + hit_ratio_)
         return [accuracy_, hit_ratio_, f_score_]
+
+    # 计算某个推荐物品的覆盖率
+    def calc_coverage(self, algo_name):
+        rec_res = self.run_all_users(algo_name, item_cat="动态")
+        num_all_rec_items = len(list(set(itertools.chain(*rec_res["recommendation"].to_list()))))
+        return num_all_rec_items/len(self.basic.filter_club(self.database.items, "剧本杀"))
 
     # 调整GeneralizedCF模型的参数
     def generalizedCF_tuning(self, n_like_recent_range):
@@ -436,30 +443,38 @@ class AlgosOperator(object):
         return param, f_scores
 
     def store_metrics_of_all_algos(self, num_iter):
-        generalized_cf_metrics_data = [[], [], []]
-        item_cf_metrics_data = [[], [], []]
-        user_cf_metrics_data = [[], [], []]
-        hybrid_cf_metrics_data = [[], [], []]
+        generalized_cf_metrics_data = [[], [], [], []]
+        item_cf_metrics_data = [[], [], [], []]
+        user_cf_metrics_data = [[], [], [], []]
+        hybrid_cf_metrics_data = [[], [], [], []]
         for i in range(num_iter):
             [accuracy, hit_ratio, f_score] = self.calc_metrics(algo_name="generalized_cf")
+            coverage = self.calc_coverage(algo_name="generalized_cf")
             generalized_cf_metrics_data[0].append(accuracy)
             generalized_cf_metrics_data[1].append(hit_ratio)
             generalized_cf_metrics_data[2].append(f_score)
+            generalized_cf_metrics_data[3].append(coverage)
 
             [accuracy, hit_ratio, f_score] = self.calc_metrics(algo_name="item_cf")
+            coverage = self.calc_coverage(algo_name="item_cf")
             item_cf_metrics_data[0].append(accuracy)
             item_cf_metrics_data[1].append(hit_ratio)
             item_cf_metrics_data[2].append(f_score)
+            item_cf_metrics_data[3].append(coverage)
 
             [accuracy, hit_ratio, f_score] = self.calc_metrics(algo_name="user_cf")
+            coverage = self.calc_coverage(algo_name="user_cf")
             user_cf_metrics_data[0].append(accuracy)
             user_cf_metrics_data[1].append(hit_ratio)
             user_cf_metrics_data[2].append(f_score)
+            user_cf_metrics_data[3].append(coverage)
 
             [accuracy, hit_ratio, f_score] = self.calc_metrics(algo_name="hybrid_cf")
+            coverage = self.calc_coverage(algo_name="hybrid_cf")
             hybrid_cf_metrics_data[0].append(accuracy)
             hybrid_cf_metrics_data[1].append(hit_ratio)
             hybrid_cf_metrics_data[2].append(f_score)
+            hybrid_cf_metrics_data[3].append(coverage)
 
         generalized_cf_metrics_df = pd.DataFrame(data=generalized_cf_metrics_data)
         generalized_cf_metrics_df["mean"] = generalized_cf_metrics_df.mean(axis=1)
@@ -485,10 +500,3 @@ class AlgosOperator(object):
         item_cf_metrics_df.to_excel(os.path.join(configs.perf_result_folder_path, "item_cf.xlsx"))
         user_cf_metrics_df.to_excel(os.path.join(configs.perf_result_folder_path, "user_cf.xlsx"))
         hybrid_cf_metrics_df.to_excel(os.path.join(configs.perf_result_folder_path, "hybrid_cf.xlsx"))
-
-
-if __name__ == "__main__":
-    db = DataBase(os.path.join(configs.data_folder_path, "data_20220222.xlsx"))
-    algos = AlgosOperator(db)
-    # algos_list.run_all_algos()
-

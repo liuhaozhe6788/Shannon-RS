@@ -4,10 +4,10 @@ import copy
 import re
 from icecream import ic
 import sys
-sys.dont_write_bytecode = True
 
-from database import check  # 用于单一模块运行
+from database import check
 from database.preprocessing import to_records
+sys.dont_write_bytecode = True
 
 
 class DataBase:
@@ -15,6 +15,7 @@ class DataBase:
         self.__data = {}
         self.load(data_file_path)
         self.__clubs = list(self.__data.get("club", {}).keys())
+        self.__items = list(self.__data.get("item", {}).keys())
         self.__users = list(self.__data.get("user", {}).keys())
         self.__like_users = list(filter(lambda x: self.get_objs(['user', x, 'like', 'item'], key="动态"), list(self.__data.get("user", {}).keys())))
 
@@ -35,6 +36,10 @@ class DataBase:
     @property
     def clubs(self):
         return self.get_clubs()
+
+    @property
+    def items(self):
+        return self.__items
 
     @property
     def users(self):

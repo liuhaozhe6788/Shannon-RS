@@ -1,18 +1,9 @@
 # encoding: utf-8
 import sys
 sys.dont_write_bytecode = True
-import os
-import requests
-from time import sleep
-import urllib.request
 from PyQt5.QtWidgets import *
-from PyQt5 import uic
 from PyQt5.QtGui import *
-from PyQt5.QtCore import *
 import cv2
-import time
-
-import configs
 
 
 class VideoWidget(QWidget):

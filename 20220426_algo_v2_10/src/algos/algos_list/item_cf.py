@@ -38,13 +38,22 @@ class ItemCF():
 
     @staticmethod
     def map_list_to_index(a: list) -> dict:
+        """
+        列表元素映射为枚举的字典
+        """
         return dict(zip(tuple(a), range(len(a))))
 
     @staticmethod
     def map_index_to_list(a: list) -> dict:
+        """
+        枚举映射为列表元素的字典
+        """
         return dict(zip(range(len(a)), tuple(a)))
 
     def create_ui_matrix(self) -> np.ndarray:
+        """
+        创建用户对物品的点赞矩阵
+        """
         ui_matrix = np.zeros((len(self.like_users), len(self.liked_dynamics)), dtype="float32")
         for u in self.like_users:
             if self.test_flag:
@@ -58,11 +67,17 @@ class ItemCF():
         return ui_matrix
 
     def compare_and_filter(self, sim):
+        """
+        物品的相似度矩阵中低于self.sim_thres的元素置为0
+        """
         thres_matrix = np.ones(sim.shape) * self.sim_thres
         mask_matrix = np.greater(sim, thres_matrix)
         return np.where(mask_matrix, sim, 0)
 
     def calc_item_similarities(self, ui_matrix: np.ndarray) -> np.ndarray:
+        """
+        计算物品的相似度矩阵
+        """
         item_similarities_ = pairwise_distances(ui_matrix.T, metric="cosine")
         item_similarities_ = np.ones(item_similarities_.shape) - item_similarities_
         item_similarities_filtered_ = self.compare_and_filter(item_similarities_)
@@ -71,6 +86,9 @@ class ItemCF():
 
     @staticmethod
     def predict(ui_matrix: np.ndarray, item_similarities_: np.ndarray) -> np.ndarray:
+        """
+        预测用户对未知物品的评分
+        """
         pred = ui_matrix.dot(item_similarities_) / np.array([np.abs(item_similarities_).sum(axis=0)])
         return pred
 

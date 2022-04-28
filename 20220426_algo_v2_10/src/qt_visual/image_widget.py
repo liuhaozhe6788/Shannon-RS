@@ -1,16 +1,10 @@
 # encoding: utf-8
 import sys
-import time
-
-sys.dont_write_bytecode = True
 import os
 import requests
-from time import sleep
-from PyQt5.QtWidgets import *
-from PyQt5 import uic
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
 from .video_widget import VideoWidget
+
+sys.dont_write_bytecode = True
 
 
 class ImageWidget(VideoWidget):

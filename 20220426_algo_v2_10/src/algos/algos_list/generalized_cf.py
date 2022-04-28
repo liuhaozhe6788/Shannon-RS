@@ -94,9 +94,6 @@ class GeneralizedCF(object):
     def prefilter(self):
         """
         初筛过滤算法
-        :param train_data:所有用户点赞的训练物品集
-        :param data_base: 类数据库类的实例
-        :param test_flag:是否测试
         :return: alpha（召回集）和元素个数n_alpha
         """
         alpha = set()  # 初始化集合alpha为空

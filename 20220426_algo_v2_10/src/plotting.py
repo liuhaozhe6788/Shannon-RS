@@ -1,3 +1,4 @@
+# encoding:utf-8
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,9 +6,9 @@ import pandas as pd
 import seaborn as sns
 from pyplotz.pyplotz import PyplotZ
 import sys
-sys.dont_write_bytecode = True
 
 import configs
+sys.dont_write_bytecode = True
 
 
 class PlotGenerator:
@@ -174,25 +175,3 @@ class PlotGenerator:
         plt.subplots_adjust(hspace=0.6)
         if savefig:
             plt.savefig(new_fig_name, dpi=100)
-
-
-if __name__ == "__main__":
-    print(pd.Series(data=[1, 2]))
-    my_plot = PlotGenerator()
-    # my_plot.bar_plots(data=[pd.DataFrame({"x_value": [1, 2, 1, 2],"y_value": [1, 2, 3, 4], "cat": [1, 1, 2, 2]}),
-    #                         pd.DataFrame({"x_value": [1, 2, 1, 2],"y_value": [1, 2, 3, 4], "cat": [1, 1, 2, 2]}),
-    #                         ],
-    #                   x="x_value",
-    #                   y="y_value",
-    #                   hue="cat",
-    #                   figwidth=20,
-    #                   figheight=20,
-    #                   new_xticks=["a", "b"],
-    #                   new_legend_labels=[f'用户点赞动态中个club标签的归一化频率', f'推荐集中个club标签的归一化频率'],
-    #                   new_xlabel="club标签",
-    #                   new_ylabel="归一化概率",
-    #                   new_titles=[1, 2],
-    #                   new_fig_name=os.path.join(configs.perf_result_folder_path, f"pseudo_result.png"),
-    #                   savefig=True
-    #                   )
-

@@ -7,13 +7,11 @@ import io
 import shutil
 from icecream import ic
 import sys
-sys.dont_write_bytecode = True
 
 import configs
-import random
 import plotting
 from database.preprocessing import clean_data
-from database import DataBase
+sys.dont_write_bytecode = True
 
 
 def cleaned_data_vis(cleaned_data_file):
@@ -130,7 +128,3 @@ def cleaned_data_vis(cleaned_data_file):
                             new_fig_name=os.path.join(configs.visualization_folder_path, f"num_of_likes_per_item_dist.png"),
                             savefig=True
                             )
-
-
-if __name__ == "__main__":
-    cleaned_data_vis("data_20220222.xlsx")

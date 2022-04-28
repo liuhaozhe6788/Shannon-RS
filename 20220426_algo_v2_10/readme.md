@@ -1,11 +1,15 @@
 # 注意事项：
 1.使用用户点赞动态的行为数据产生用户的特征向量<br>
 2.类数据库中物品的CLUB标签与用户加入的CLUB标签为二级标签，精选集的CLUB标签为二级标签，存储的物品只为动态内容<br>
-2.用户行为和物品信息由src/data_base/check/behavior.xlsx表格维护<br>
-# 新增内容：
-1.对itemCF模型增加和调整了相似度阈值参数和top-n推荐阈值参数<br>
-2.对userCF模型增加和调整了近邻个数参数和top-n推荐阈值参数<br>
-3.对naive hybrid模型增加和调整了混合比例参数<br>
+3.用户行为和物品信息由src/data_base/check/behavior.xlsx表格维护<br>
+4.buffer路径中存储item_cf、user_cf和hybrid_cf模型的中间运行结果：
+item_cf_top_n_recommendation_map.feather存储item_cf模型的中间运行结果；
+user_cf_top_n_recommendation_map.feather存储user_cf模型的中间运行结果；
+item_cf_in_hybrid_cf_top_n_recommendation_map.feather和user_cf_top_n_recommendation_map.feather存储hybrid_cf模型的中间运行结果<br>
+5.algo_results/perf_result路径中存储推荐性能指标结果<br>
+6.algo_results/rec_result路径中存储推荐物品的结果<br>
+7.algo_results/tuning_result路径中存储模型调参的结果
+
 # 类数据库实例如下
 ```json
 data = {

@@ -2,9 +2,9 @@
 import os
 import shutil
 import sys
-sys.dont_write_bytecode = True
 
 import configs
+sys.dont_write_bytecode = True
 
 
 def create_folder_paths():

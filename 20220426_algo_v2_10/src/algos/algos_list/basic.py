@@ -66,7 +66,10 @@ class Basic(object):
             beta_hat = beta[: thresholds[1]]
             beta_ = beta[thresholds[1]:]
             beta1 = list(set(m) | set(beta_))
-            beta1_hat = random.sample(beta1, thresholds[2] - thresholds[1])
+            if len(beta1) >= thresholds[2] - thresholds[1]:
+                beta1_hat = random.sample(beta1, thresholds[2] - thresholds[1])
+            else:
+                beta1_hat = beta1
             gama = beta_hat + beta1_hat
 
         n_gama = len(gama)
@@ -76,6 +79,9 @@ class Basic(object):
         return gama, n_gama
 
     def filter_club(self, items, club_label="剧本杀"):
+        """
+        对物品进行剧本杀一级CLUB标签的过滤
+        """
         item_filtered = []
         for i in items:
             for club in self.database.get_objs(['item', i, 'have', 'club'], key="动态"):

@@ -1,6 +1,5 @@
 # encoding: utf-8
 import sys
-sys.dont_write_bytecode = True
 import numpy as np
 import os
 import logging
@@ -16,15 +15,16 @@ import database
 import utils
 from algos import GeneralizedCF, ItemCF, UserCF, HybridCF
 
-
+sys.dont_write_bytecode = True
 logging.basicConfig(format="%(message)s", level=logging.INFO)
 
-N = 0
+N = 0  # 计数已结束的线程个数
 
 
 class WorkerSignals(QObject):
-    finish = pyqtSignal(bytes)
-    finish_all = pyqtSignal(bool)
+    # 定义Widget之间的信号
+    finish = pyqtSignal(bytes)  # 一幅新图片加载完成的信号
+    finish_all = pyqtSignal(bool)  # 所有图片加载完成的信号
 
 
 class Runnable(QRunnable):
@@ -41,11 +41,11 @@ class Runnable(QRunnable):
         frame_data = self.widget.add_img()
         N = N + 1
         logging.info(f"thread No.{self.n} is finished, {N}/{self.n_threads} threads are finished")
-        self.signals.finish.emit(frame_data)  # 图片下载完后，发出信号给GUI，用于界面的更新，显示图片
+        self.signals.finish.emit(frame_data)  # 图片下载完后，发出信号把图片比特流传给给GUI，用于界面的更新，显示图片
 
         if N == self.n_threads:
             logging.info(f"all {N} contents downloaded")
-            self.signals.finish_all.emit(True)
+            self.signals.finish_all.emit(True)  # 所有图片加载完后，发出True信号，让GUI上的确认按钮重新生效
 
 
 class UI(QWidget):
@@ -301,24 +301,6 @@ class UI(QWidget):
                     self.scrollAlgo_4Layout
                 )
 
-        # # 用于调试
-        # for i in range(300):
-        #     self.add_widgets(
-        #         "vid",
-        #         "https://trends-video-1304083978.file.myqcloud.com/48622_1630374360300.mp4",
-        #         "动态2",
-        #         "追星",
-        #         self.scrollLikeLayout,
-        #     )
-        #     self.add_widgets(
-        #         "img",
-        #         "https://pictrue01-1304083978.file.myqcloud.com/48660_16282286980466098_828.000000*992.000000.png",
-        #         "动态2",
-        #         "追星",
-        #         self.scrollLikeLayout,
-        #     )
-
-
         self.add_contents()
 
     def add_widgets(self, content_type_, url_, itemid_, club_, scroll_layout_):
@@ -335,6 +317,9 @@ class UI(QWidget):
             return
 
     def add_contents(self):
+        """
+        使用线程池加载图片
+        """
         pool = QThreadPool.globalInstance()
         logging.info(f"Running {len(self.scrollWidgets)} Threads")
         for i in range(len(self.scrollWidgets)):
@@ -344,6 +329,9 @@ class UI(QWidget):
             pool.start(runnable)
 
     def delete_all_res(self):
+        """
+        将历史图片信息都抹去
+        """
         for i in reversed(range(self.scrollLikeLayout.count())):
             self.scrollLikeLayout.itemAt(i).widget().setParent(None)
 
