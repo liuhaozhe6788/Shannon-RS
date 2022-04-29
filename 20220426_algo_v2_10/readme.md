@@ -10,6 +10,10 @@ item_cf_in_hybrid_cf_top_n_recommendation_map.feather和user_cf_top_n_recommenda
 6.algo_results/rec_result路径中存储推荐物品的结果<br>
 7.algo_results/tuning_result路径中存储模型调参的结果
 
+# 运行代码的命令：
+1.运行主程序：python main.py
+2.运行GUI程序：python aifunwatcher.py
+
 # 类数据库实例如下
 ```json
 data = {

@@ -4,16 +4,12 @@ import pandas as pd
 import numpy as np
 import sys
 
-# from PyQt5.QtWidgets import QApplication
-
-sys.dont_write_bytecode = True
-
 import configs
 import database
 import visualization
-# from qt_visual import UI
 from algos import AlgosOperator, ItemCF, UserCF, HybridCF
 import utils
+sys.dont_write_bytecode = True
 
 
 if __name__ == "__main__":
@@ -77,9 +73,3 @@ if __name__ == "__main__":
         gama_dfs.append(gama_df)
     gama_results = dict(zip(algo_names, gama_dfs))
     visualization.hit_vis(algo_names, legend_names, gama_results, mydb)
-
-    # 显示GUI
-    # app = QApplication(sys.argv)
-    # window = UI(database.DataBase(os.path.join(configs.data_folder_path, "data_20220222.xlsx")))
-    # window.show()
-    # app.exec_()

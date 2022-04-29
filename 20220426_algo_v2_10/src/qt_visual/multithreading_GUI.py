@@ -68,7 +68,7 @@ class UI(QWidget):
                                   "item_cf_in_hybrid_cf_top_n_recommendation_map.feather",
                                   "user_cf_in_hybrid_cf_top_n_recommendation_map.feather",
                                   hybrid_cf_params[0])
-
+        self.hybrid_cf.get_top_n()
         self.setFixedWidth(1850)
         self.setFixedHeight(1000)
 
