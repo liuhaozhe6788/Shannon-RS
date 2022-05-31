@@ -56,7 +56,7 @@ def userCF_tuning_vis(num_neigh_thres_range, pred_thres_range):
                       hue="pred_thres",
                       data=df,
                       figwidth=24,
-                      figheight=30,
+                      figheight=20,
                       ylim_low=0.02855,
                       ylim_high=0.02876,
                       legend_fontsize=30,
@@ -103,12 +103,19 @@ def hybridCF_tuning_vis(p_range):
 
 
 if __name__ == "__main__":
-    # itemCF_tuning_vis(np.arange(0.5, 0.8, 0.03), np.arange(0, 0.2, 0.04))
-    # userCF_tuning_vis(np.arange(20, 50, 3), np.arange(0.1, 0.14, 0.01))
-    # hybridCF_tuning_vis(np.arange(0.4, 0.6, 0.02))
+    itemCF_tuning_vis(np.arange(0.5, 0.8, 0.03), np.arange(0, 0.2, 0.04))
+    userCF_tuning_vis(np.arange(20, 50, 3), np.arange(0.1, 0.14, 0.01))
+    hybridCF_tuning_vis(np.arange(0.4, 0.6, 0.02))
     user_cf_params = np.load(os.path.join(configs.tuning_result_folder_path, "user_cf_params.npy"))
     item_cf_params = np.load(os.path.join(configs.tuning_result_folder_path, "item_cf_params.npy"))
     hybrid_cf_params = np.load(os.path.join(configs.tuning_result_folder_path, "hybrid_cf_params.npy"))
     ic(user_cf_params)
     ic(item_cf_params)
     ic(hybrid_cf_params)
+
+    user_cf_tuning_res = np.load(os.path.join(configs.tuning_result_folder_path, "user_cf_tuning.npy"))
+    item_cf_tuning_res = np.load(os.path.join(configs.tuning_result_folder_path, "item_cf_tuning.npy"))
+    hybrid_cf_tuning_res = np.load(os.path.join(configs.tuning_result_folder_path, "hybrid_cf_tuning.npy"))
+    ic(np.max(user_cf_tuning_res))
+    ic(np.max(item_cf_tuning_res))
+    ic(np.max(hybrid_cf_tuning_res))

@@ -16,7 +16,7 @@ if __name__ == "__main__":
     utils.create_folder_paths()
 
     # 清洗后的数据可视化
-    visualization.cleaned_data_vis("data_20220222.xlsx")
+    # visualization.cleaned_data_vis("data_20220222.xlsx")
 
     mydb = database.DataBase(os.path.join(configs.data_folder_path, "data_20220222.xlsx"))
     algos = AlgosOperator(mydb)
@@ -25,9 +25,9 @@ if __name__ == "__main__":
     # param, hybridCF_fscores = algos.hybridCF_tuning(np.arange(0.4, 0.6, 0.02))
 
     # 调参结果可视化
-    visualization.itemCF_tuning_vis(np.arange(0.5, 0.8, 0.03), np.arange(0, 0.2, 0.04))
-    visualization.userCF_tuning_vis(np.arange(20, 50, 3), np.arange(0.1, 0.14, 0.01))
-    visualization.hybridCF_tuning_vis(np.arange(0.4, 0.6, 0.02))
+    # visualization.itemCF_tuning_vis(np.arange(0.5, 0.8, 0.03), np.arange(0, 0.2, 0.04))
+    # visualization.userCF_tuning_vis(np.arange(20, 50, 3), np.arange(0.1, 0.14, 0.01))
+    # visualization.hybridCF_tuning_vis(np.arange(0.4, 0.6, 0.02))
 
     # iteration = 20
     # arr = np.zeros(iteration, dtype=float)
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     # print(np.average(arr))
 
     # 计算和存储性能指标
-    algos.store_metrics_of_all_algos(num_iter=50)
+    # algos.store_metrics_of_all_algos(num_iter=50)
 
     # 给某用户运行单个推荐算法
     # item_cf_params = np.load(os.path.join(configs.tuning_result_folder_path, "item_cf_params.npy"))

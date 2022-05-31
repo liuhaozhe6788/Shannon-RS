@@ -136,6 +136,7 @@ def club_dist_vis(algo_name, title_name, gama_result, data_base_):
     my_plot = plotting.PlotGenerator()
     dfs = []
     new_titles = []
+    subplot_index = ['(a)', '(b)', '(c)']
     for k in range(len(selected_users)):
         user_view = data_base_.get_objs(['user', selected_users[k], 'view', 'item'], key="动态")
         n_user_view = len(user_view)
@@ -163,20 +164,20 @@ def club_dist_vis(algo_name, title_name, gama_result, data_base_):
         })
         # print(df)
         dfs.append(df)
-        new_titles.append(f"算法{title_name}的结果中用户{selected_users[k]}的推荐动态与点赞动态的比较")
+        new_titles.append(f"{subplot_index[k]} 算法{title_name}的结果中用户{selected_users[k]}的推荐动态与点赞动态的比较")
     my_plot.bar_plots(x="x_values",
                       y="freq",
                       hue="cat",
                       data=dfs,
                       figwidth=40,
                       figheight=20*len(selected_users),
-                      legend_fontsize="40",
-                      xtick_fontsize=40,
-                      ytick_fontsize=40,
+                      legend_fontsize="50",
+                      xtick_fontsize=45,
+                      ytick_fontsize=45,
                       xtick_rot=0,
                       xlabel_fontsize=50,
                       ylabel_fontsize=50,
-                      title_fontsize=60,
+                      title_fontsize=65,
                       new_xticks=list(map(lambda x: x[:5] + "\n" + x[5:] if len(x) > 5 else x,
                                           list(map(lambda x: x.split(":")[-1], clubs_list)))),
                       # new_xticks=list(map(lambda x: x.split(":")[-1], clubs_list)),

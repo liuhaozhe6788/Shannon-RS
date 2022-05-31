@@ -191,11 +191,12 @@ class AlgosOperator(object):
         f_score_ = 2 * accuracy_ * hit_ratio_ / (accuracy_ + hit_ratio_)
         return [accuracy_, hit_ratio_, f_score_]
 
-    # 计算某个推荐物品的覆盖率
+    # 计算某个推荐算法的覆盖率
     def calc_coverage(self, algo_name):
         rec_res = self.run_all_users(algo_name, item_cat="动态")
-        num_all_rec_items = len(list(set(itertools.chain(*rec_res["recommendation"].to_list()))))
-        return num_all_rec_items/len(self.basic.filter_club(self.database.items, "剧本杀"))
+        num_all_script_kill_items = len(self.basic.filter_club(self.database.items, "剧本杀"))
+        num_all_rec_items = len(list(set(itertools.chain.from_iterable(rec_res["recommendation"].to_list()))))
+        return num_all_rec_items/num_all_script_kill_items
 
     # 调整GeneralizedCF模型的参数
     def generalizedCF_tuning(self, n_like_recent_range):

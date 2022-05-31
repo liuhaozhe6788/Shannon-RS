@@ -13,7 +13,7 @@ sys.dont_write_bytecode = True
 
 class PlotGenerator:
 
-    def __init__(self, style="whitegrid", rotation=30, palette="dark"):
+    def __init__(self, style="whitegrid", rotation=30, palette="bright"):
         self._style = style
         self._rotation = rotation
         self._palette = palette
@@ -48,10 +48,11 @@ class PlotGenerator:
         ax = sns.countplot(x=x, data=data, palette=self._palette)
         if show_bar_value:
             self.show_values(ax)
-        pltz.xticks(rotation=0, fontsize=40)
-        pltz.yticks(fontsize=40)
-        pltz.xlabel(new_xlabel, fontsize=45)
-        pltz.ylabel(new_ylabel, fontsize=45)
+        new_xticks = list(map(lambda x: x[:5] + "\n" + x[5:] if len(x) > 5 else x, [item.get_text() for item in ax.get_xticklabels()]))
+        pltz.xticks(range(len(new_xticks)), new_xticks, rotation=0, fontsize=45)
+        pltz.yticks(fontsize=45)
+        pltz.xlabel(new_xlabel, fontsize=50)
+        pltz.ylabel(new_ylabel, fontsize=50)
         pltz.title(new_title, fontsize=60)
         if savefig:
             plt.savefig(new_fig_name, dpi=100)
@@ -144,7 +145,8 @@ class PlotGenerator:
         ax = sns.barplot(x=x, y=y,  hue=hue, data=data, palette=self._palette)
         if show_point_value:
             self.show_values(ax)
-        pltz.legend(labels=new_legend_labels)
+        current_handles, _ = plt.gca().get_legend_handles_labels()
+        pltz.legend(current_handles, new_legend_labels)
         plt.setp(ax.get_legend().get_texts(), fontsize=legend_fontsize)
         pltz.xticks(range(len(new_xticks)), new_xticks, rotation=xtick_rot, fontsize=xtick_fontsize)
         pltz.yticks(fontsize=ytick_fontsize)
@@ -165,7 +167,8 @@ class PlotGenerator:
             ax = sns.barplot(x=x, y=y,  hue=hue, data=data[i], palette=self._palette)
             if show_point_value:
                 self.show_values(ax)
-            pltz.legend(labels=new_legend_labels)
+            current_handles, _ = plt.gca().get_legend_handles_labels()
+            pltz.legend(current_handles, new_legend_labels, handlelength=int(legend_fontsize)/6, handleheight=int(legend_fontsize)/12)
             plt.setp(ax.get_legend().get_texts(), fontsize=legend_fontsize)
             pltz.xticks(range(len(new_xticks)), new_xticks, rotation=xtick_rot, fontsize=xtick_fontsize)
             pltz.yticks(fontsize=ytick_fontsize)

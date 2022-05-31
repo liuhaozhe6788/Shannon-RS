@@ -77,11 +77,11 @@ def cleaned_data_vis(cleaned_data_file):
     # ic(club_one_desc)
     plotgenerator.count_plot(x="desc",
                              data=club_two_desc,
-                             figwidth=60,
-                             figheight=16,
+                             figwidth=40,
+                             figheight=20,
                              new_xlabel="剧本杀CLUB二级标签",
                              new_ylabel="动态的数量",
-                             new_title="所有剧本杀动态在CLUB二级标签的数量分布",
+                             new_title="所有""剧本杀""动态在CLUB二级标签的数量分布",
                              new_fig_name=os.path.join(configs.visualization_folder_path, f"num_of_items_per_club2_dist.png"),
                              savefig=True
                              )
@@ -93,8 +93,8 @@ def cleaned_data_vis(cleaned_data_file):
     # ic(club_one_desc)
     plotgenerator.count_plot(x="desc",
                              data=club_two_desc,
-                             figwidth=60,
-                             figheight=16,
+                             figwidth=40,
+                             figheight=20,
                              new_xlabel="剧本杀CLUB二级标签",
                              new_ylabel="动态的数量",
                              new_title="用户点赞剧本杀动态在CLUB二级标签的数量分布",
@@ -119,7 +119,7 @@ def cleaned_data_vis(cleaned_data_file):
     # 每个物品被点赞的用户数量分布
     num_liked_df = user_like_df.groupby(["object_id"]).count().sort_values(by="behavior", ascending=False).reset_index()
     plotgenerator.hist_plot(x=num_liked_df["behavior"],
-                            figwidth=20,
+                            figwidth=30,
                             figheight=20,
                             binwidth=1,
                             new_xlabel="动态被点赞次数",
@@ -128,3 +128,6 @@ def cleaned_data_vis(cleaned_data_file):
                             new_fig_name=os.path.join(configs.visualization_folder_path, f"num_of_likes_per_item_dist.png"),
                             savefig=True
                             )
+
+if __name__ == "__main__":
+    cleaned_data_vis("data_20220222.xlsx")

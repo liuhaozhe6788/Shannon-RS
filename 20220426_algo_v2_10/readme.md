@@ -8,7 +8,11 @@ user_cf_top_n_recommendation_map.feather存储user_cf模型的中间运行结果
 item_cf_in_hybrid_cf_top_n_recommendation_map.feather和user_cf_top_n_recommendation_map.feather存储hybrid_cf模型的中间运行结果<br>
 5.algo_results/perf_result路径中存储推荐性能指标结果<br>
 6.algo_results/rec_result路径中存储推荐物品的结果<br>
-7.algo_results/tuning_result路径中存储模型调参的结果
+7.algo_results/tuning_result路径中存储模型调参的结果<br>
+8.算法名称中"generalized_cf"对应混合广义协同过滤；
+"item_cf"对应基于物品的协同过滤；
+"user_cf"对应基于用户的协同过滤；
+"hybrid_cf"对应混合协同过滤
 
 # 运行代码的命令：
 1.运行主程序：python main.py<br>
